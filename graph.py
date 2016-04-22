@@ -9,7 +9,7 @@ from snap import *
 pd.options.display.encoding = sys.stdout.encoding
 
 
-fp = codecs.open("file", "r", encoding='utf-8')
+fp = codecs.open("cascadeInfo/333.txt", "r", encoding='utf-8')
 
 
 
@@ -41,8 +41,8 @@ for i in xrange(len(preid)):
     preid[i] = 0
   else:
     preid[i] = useridList[curid.index(preid[i])]
-'''
 
+'''
 
 
 # convert userid to a node intergers
@@ -89,6 +89,17 @@ for item in NodeVec:
 
 
 
+
+#code for get average degree of nodes
+result_degree = TIntV()
+GetDegSeqV(G1, result_degree)
+total = 0
+for i in range(0, result_degree.Len()):
+    total = total + result_degree[i]
+
+print float(total)
+print float(result_degree.Len())
+print total*1.0/result_degree.Len()
 
 
 
