@@ -31,8 +31,17 @@ curid =df_reshare['cur_published'].values.tolist();
 userid =df_reshare['userId'].values.tolist();
 #print len(userid)
 
+'''
+useridList = [0]*len(userid)
+for i in xrange(len(curid)):
+    useridList[i] = i+1;
 
-
+for i in xrange(len(preid)):
+  if preid[i] not in curid:
+    preid[i] = 0
+  else:
+    preid[i] = useridList[curid.index(preid[i])]
+'''
 
 
 
@@ -48,7 +57,6 @@ for elem in userid:
     nonRepeatingUserid.append(elem)
     useridList[i] = nonRepeatingUserid.index(elem)+1
   i += 1
-print len(useridList)
 
 
 
@@ -57,23 +65,27 @@ for i in xrange(len(preid)):
     preid[i] = 0
   else:
     preid[i] = useridList[curid.index(preid[i])]
-print preid
 
-output = pd.DataFrame({"from": preid, "to": userid})
-output.to_csv('output', sep=',')
+
 
 
 
 
 #construct graph
 G1 = TNGraph.New()
-for nodeVal in useridList:
-  G1.AddNode(0)
-  G1.AddNode(nodeVal)
+G1.AddNode(0)
+for i in range(1, len(nonRepeatingUserid)+1):
+  G1.AddNode(i)
+#for i in useridList:
+ # G1.AddNode(i)
 for i in xrange(len(preid)):
   if preid[i] != -1:
       G1.AddEdge(preid[i], useridList[i])
 
+NodeVec = TIntPrV()
+GetNodesAtHops(G1, 0, NodeVec, True)
+for item in NodeVec:
+    print "%d, %d" % (item.GetVal1(), item.GetVal2())
 
 
 
