@@ -1,4 +1,5 @@
-#add label to the data, whether a post will double in size
+#perform logistic regression on fansnumber of each article
+#given articles size>step, predict whether it will double
 import pandas as pd
 import numpy as np 
 import matplotlib.pyplot as plt 
