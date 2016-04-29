@@ -11,7 +11,7 @@ import matplotlib
 from sklearn import linear_model
 from sklearn.cross_validation import train_test_split
 from sklearn.cross_validation import StratifiedKFold
-from sklearn.feature_selection RFECV
+from sklearn.feature_selection import RFECV
 #read in the data
 Location  = r'/data/stanford/p_hf/ky_allDistribution'
 Location_fan  = r'/data/wechat_data/biz_fans_num.txt'
@@ -87,13 +87,16 @@ for i in xrange(len(step)-1):
     rfecv.fit(X_train, y_train)
 
     print("Optimal number of features : %d" % rfecv.n_features_)
+    X_train_new = rfecv.transform(X_train)
+    print("best features: ")
+    print X_train_new
 
     # Plot number of features VS. cross-validation scores
-    plt.figure()
-    plt.xlabel("Number of features selected")
-    plt.ylabel("Cross validation score (nb of correct classifications)")
-    plt.plot(range(1, len(rfecv.grid_scores_) + 1), rfecv.grid_scores_)
-    plt.show()
+    #plt.figure()
+    #plt.xlabel("Number of features selected")
+    #plt.ylabel("Cross validation score (nb of correct classifications)")
+    #plt.plot(range(1, len(rfecv.grid_scores_) + 1), rfecv.grid_scores_)
+    #plt.show()
 
 
 
