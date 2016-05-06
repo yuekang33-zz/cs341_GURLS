@@ -76,11 +76,12 @@ for i in xrange(len(step)-1):
         'recvmsg_count':'mean','snsupload_count':'mean','sns_view':'mean','cascadeLayer':'sum'})#might also need cascade size as well
     df_reshare_sizeby_timestep =  df_reshare_drop.groupby(['bizuin_md5','appmsgid','itemidx'],as_index = False).agg({'cascadeLayer':{'curSize':'count'}})
     df_reshare_sizeby_timestep.columns =  df_reshare_sizeby_timestep.columns.droplevel(0)
-    
+    df_reshare_sizeby_timestep.columns = ['bizuin_md5','appmsgid','itemidx','curSize']
     #create label by comparing the cascade size after 2 timesteps with the size at current timestep
     df_reshare_drop_2step = df_reshare[df_reshare['time_elapsed']<=step[i+1]]
     df_reshare_sizeby_2timestep =  df_reshare_drop.groupby(['bizuin_md5','appmsgid','itemidx'],as_index = False).agg({'cascadeLayer':{'nextSize':'count'}})
     df_reshare_sizeby_2timestep.columns =  df_reshare_sizeby_2timestep.columns.droplevel(0)
+    df_reshare_sizeby_2timestep.columns = ['bizuin_md5','appmsgid','itemidx','nextSize']
     df_reshare_sizeby_timestep = pd.merge(df_reshare_sizeby_timestep,df_reshare_sizeby_2timestep,on = ['appmsgid','bizuin_md5','itemidx'])
     df_reshare_sizeby_timestep['label'] = 2*df_reshare_sizeby_timestep['curSize']<=df_reshare_sizeby_timestep['nextSize']
     #get number of views group by id    
