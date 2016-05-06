@@ -3,6 +3,9 @@
 #   public account: number of fans,length of posts
 #   reshare user: average age,sex,education_level,reg_time,friend_count,sendmsg_count,recvmsg_count,snsupload_count,sns_view
 #   reshare user's position in the cascade
+#model:
+#   logistic regression    
+#   5 fold cross validation added
 import pandas as pd
 import numpy as np 
 import matplotlib.pyplot as plt 
