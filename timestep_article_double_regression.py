@@ -62,12 +62,13 @@ df_distribution = pd.merge(df_distribution,df_fancount, on = 'bizuin_md5')
 df_reshare = pd.merge(df_reshare,df_cascade,how = "left", on = ['appmsgid','bizuin_md5','itemidx','uin_md5'])
 ##########log regression
 #set timestep,from 15 min to 30 min
-step = np.array([15,30,60,120,240])*60
+step = np.array([30,60,120,240])*60
 for i in xrange(len(step)-1):
     #filter the data by time elapsed, get user feature groupby  article id and merge with reshare
     df_reshare = df_reshare.groupby(['bizuin_md5','appmsgid','itemidx'])
     df_reshare = df_reshare.apply(pd.DataFrame.sort,'reshare_timestamp',ascending  = True)
-    df_reshare_drop = df_reshare[df_reshare['time_elapsed']<=step[i]]
+    df_sample = df_reshare['time_elapsed']<=step[i]
+    df_reshare_drop = df_reshare[df_sample]
     df_reshare_drop = pd.merge(df_reshare_drop,df_user, how = 'inner', on = 'uin_md5')
     df_reshare_user = df_reshare_drop.groupby(['bizuin_md5','appmsgid','itemidx'],
         as_index = False).agg(
@@ -78,14 +79,16 @@ for i in xrange(len(step)-1):
     df_reshare_sizeby_timestep.columns =  df_reshare_sizeby_timestep.columns.droplevel(0)
     df_reshare_sizeby_timestep.columns = ['bizuin_md5','appmsgid','itemidx','curSize']
     #create label by comparing the cascade size after 2 timesteps with the size at current timestep
-    df_reshare_drop_2step = df_reshare[df_reshare['time_elapsed']<=step[i+1]]
-    df_reshare_sizeby_2timestep =  df_reshare_drop.groupby(['bizuin_md5','appmsgid','itemidx'],as_index = False).agg({'cascadeLayer':{'nextSize':'count'}})
+    df_sample = df_reshare['time_elapsed']<=step[i+1]
+    df_reshare_drop_2step = df_reshare[df_sample]
+    df_reshare_sizeby_2timestep =  df_reshare_drop_2step.groupby(['bizuin_md5','appmsgid','itemidx'],as_index = False).agg({'cascadeLayer':{'nextSize':'count'}})
     df_reshare_sizeby_2timestep.columns =  df_reshare_sizeby_2timestep.columns.droplevel(0)
     df_reshare_sizeby_2timestep.columns = ['bizuin_md5','appmsgid','itemidx','nextSize']
     df_reshare_sizeby_timestep = pd.merge(df_reshare_sizeby_timestep,df_reshare_sizeby_2timestep,on = ['appmsgid','bizuin_md5','itemidx'])
     df_reshare_sizeby_timestep['label'] = 2*df_reshare_sizeby_timestep['curSize']<=df_reshare_sizeby_timestep['nextSize']
-    #get number of views group by id    
-    df_reshare_drop = df_reshare_timestamp[df_reshare['time_elapsed']<=step[i]]
+    #get number of views group by id
+    df_sample = df_reshare_timestamp['time_elapsed']<=step[i]
+    df_reshare_drop = df_reshare_timestamp[df_sample]
     df_reshare_step = df_reshare_drop.groupby(['bizuin_md5','appmsgid','itemidx'],
         as_index = False).agg({'reshare_timestamp':'max'})
     df_view_step = pd.merge(df_view,df_reshare_step, how = 'inner',on = ['appmsgid','bizuin_md5','itemidx'])
@@ -94,7 +97,12 @@ for i in xrange(len(step)-1):
         as_index = False).agg({'read_timestamp':'count'})
     
     #merge those user information with the labels and cascade size by each time step information
-    df_temp = pd.merge(df_reshare_user,df_reshare_sizeby_timestep,on = ['appmsgid','bizuin_md5','itemidx'])
+    df_temp = df_distribution
+    df_temp['appmsgid'] = df_temp['appmsgid'].astype(int)
+    df_temp['itemidx'] = df_temp['itemidx'].astype(int)
+    df_temp = pd.merge(df_temp,df_reshare_user, how = 'right',on = ['appmsgid','bizuin_md5','itemidx'])
+    #df_temp = pd.merge(df_reshare_user,df_reshare_sizeby_timestep,on = ['appmsgid','bizuin_md5','itemidx'])
+    df_temp = pd.merge(df_temp,df_reshare_sizeby_timestep,on = ['appmsgid','bizuin_md5','itemidx'])
     """
     print "merge with user info",df_temp.head()
     """
