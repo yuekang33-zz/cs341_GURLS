@@ -106,26 +106,15 @@ for i in xrange(len(step)):
     df_temp = df_temp[np.isfinite(df_temp['sns_view'])]
     df_temp = df_temp[np.isfinite(df_temp['read_timestamp'])]
     df_temp = df_temp[np.isfinite(df_temp['cascadeLayer'])]
-    
-    df_features = pd.DataFrame()
-    df_features['fans_num'] = df_temp['fans_num']
-    df_features['friend_count'] = df_temp['friend_count']
-    df_features['age'] = df_temp['age']
-    df_features['sex'] = df_temp['sex']
-    df_features['education_level'] = df_temp['education_level']
-    df_features['sendmsg_count'] = df_temp['sendmsg_count']   
-    df_features['recvmsg_count'] = df_temp['recvmsg_count']
-    df_features['snsupload_count'] = df_temp['snsupload_count']
-    df_features['sns_view'] = df_temp['sns_view']   
-    df_features['read_count'] = df_temp['read_timestamp'] 
-    df_features['len'] = df_temp['len'].astype(int)
-    df_features['cascadeLayer'] = df_temp['cascadeLayer']
-    df_features['read_count_reverse'] = 1/df_temp['read_timestamp'] 
+
+    df_temp = df_temp.drop('appmsgid', axis =1)
+    df_temp = df_temp.drop('itemidx', axis =1 )
+    df_temp = df_temp.drop('bizuin_md5', axis =1 )
     """
     print "example of features"
     print df_features.head()
     """
-    X = df_features.values.tolist()
+    X = df_temp.values.tolist()
     X = np.array(X)
     X = X/X.max(axis=0)
     median_size = df_temp["cascadeSize"].median()
