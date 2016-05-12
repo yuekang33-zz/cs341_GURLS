@@ -3,9 +3,12 @@
 #   public account: number of fans,length of posts
 #   reshare user: average age,sex,education_level,reg_time,friend_count,sendmsg_count,recvmsg_count,snsupload_count,sns_view
 #   reshare user's position in the cascade
+#   structual: number of first layer users, 
+#   more user features
 #model:
 #   logistic regression    
 #   5 fold cross validation added
+#   correlation coefficient
 import pandas as pd
 import numpy as np 
 import scipy
@@ -67,7 +70,22 @@ for i in xrange(len(step)):
     df_reshare = df_reshare.apply(pd.DataFrame.sort,'reshare_timestamp',ascending  = True)
     df_reshare_drop = df_reshare.groupby(level = ['bizuin_md5','appmsgid','itemidx']).head(step[i])
     df_reshare_drop = pd.merge(df_reshare_drop,df_user, how = 'inner', on = 'uin_md5')
-
+    ####new feature: structual####
+    df_reshare_struct = df_reshare_drop.copy()
+    df_reshare_struct["firstLayer"] = df_reshare_struct['cascadeLayer']==1
+    df_reshare_struct["stdLayer"] = df_reshare_struct['cascadeLayer'].copy()
+    df_reshare_struct["avgLayer"] = df_reshare_struct['cascadeLayer'].copy()
+    df_reshare_struct["did_leave"] = df_reshare_struct['cascadeLayer'].copy()
+    df_reshare_struct.rename(columns={'friend_count':'borderNodes'},inplace = True)
+    df_reshare_structural = df_reshare_struct.groupby(['bizuin_md5','appmsgid','itemidx'],as_index = False).agg({'firstLayer':'sum','borderNodes':'sum','stdLayer':'std','avgLayer':'mean','did_leave':'max'})
+    ##add number of fans to bordernodes
+    df_reshare_structural = pd.merge(df_reshare_structural,df_fancount, how = "left", on = ['bizuin_md5'])
+    df_reshare_structural['borderNodes'] = df_reshare_structural['borderNodes']+df_reshare_structural['fans_num']
+    df_reshare_structural = df_reshare_structural.drop('fans_num', axis=1)
+    ##change did_leave to true false values
+    df_reshare_structural['did_leave']  = df_reshare_structural['did_leave']>1
+    print df_reshare_structural.head()
+    ####end of structural feature####
 
     #additional user features
     #get the number of female users among the first k resharers, avg. 'userhood' of k users since registered
@@ -139,6 +157,10 @@ for i in xrange(len(step)):
     df_temp['itemidx'] = df_temp['itemidx'].astype(int)
     df_temp = pd.merge(df_temp,df_reshare_user1, on = ['appmsgid','bizuin_md5','itemidx'])
     df_temp = pd.merge(df_temp,df_reshare_addUser1, on = ['appmsgid','bizuin_md5','itemidx'])
+    
+    ####new merge with structure information
+    df_temp = pd.merge(df_temp,df_reshare_structural, on = ['appmsgid','bizuin_md5','itemidx'])
+    
     """
     print "merge with user info",df_temp.head()
     """
