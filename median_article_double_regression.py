@@ -95,17 +95,7 @@ for i in xrange(len(step)):
     """
     print "merge with view info",df_temp.head()  
     """    
-    df_temp = df_temp[np.isfinite(df_temp['fans_num'])]
-    df_temp = df_temp[np.isfinite(df_temp['friend_count'])]
-    df_temp = df_temp[np.isfinite(df_temp['age'])]
-    df_temp = df_temp[np.isfinite(df_temp['sex'])]
-    df_temp = df_temp[np.isfinite(df_temp['education_level'])]
-    df_temp = df_temp[np.isfinite(df_temp['sendmsg_count'])]
-    df_temp = df_temp[np.isfinite(df_temp['recvmsg_count'])]
-    df_temp = df_temp[np.isfinite(df_temp['snsupload_count'])]
-    df_temp = df_temp[np.isfinite(df_temp['sns_view'])]
-    df_temp = df_temp[np.isfinite(df_temp['read_timestamp'])]
-    df_temp = df_temp[np.isfinite(df_temp['cascadeLayer'])]
+    df_temp = df_temp.dropna(how = "any")
 
     df_temp = df_temp.drop('appmsgid', axis =1)
     df_temp = df_temp.drop('itemidx', axis =1 )
