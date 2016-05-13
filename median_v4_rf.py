@@ -67,6 +67,8 @@ df_distribution = pd.merge(df_distribution,df_fancount, on = 'bizuin_md5')
 df_reshare = pd.merge(df_reshare,df_cascade,how = "left", on = ['appmsgid','bizuin_md5','itemidx','uin_md5'])
 #log regression
 step = [5,10,20,40,80,160,320,640,1280,2560,5120,10240]
+avgscore =[]
+numData = []
 for i in xrange(len(step)):
     #get user feature groupby  article id and merge with reshare
     df_reshare = df_reshare.groupby(['bizuin_md5','appmsgid','itemidx'])
@@ -199,10 +201,6 @@ for i in xrange(len(step)):
    # df_temp['top'] = df_timeGap['diffs']
    # df_temp['bottom'] = df_timeGap['bottom']
     df_temp['viewspeed'] = df_temp['numViews']/df_temp['timeElapsed']
-    """
-    print "example of features"
-    print df_features.head()
-    """
 
     median_size = df_temp["cascadeSize"].median()
     print "median size", median_size
@@ -219,7 +217,7 @@ for i in xrange(len(step)):
     X = np.array(X)
     X = X/X.max(axis=0)
     #five fold cross-validation
-    print "length of total data is", len(X)
+    numData.append(len(X))
     score1= []
     score2= []
     kf = KFold(len(X), n_folds = 5, shuffle = True )
@@ -232,8 +230,10 @@ for i in xrange(len(step)):
             max_leaf_nodes=None, bootstrap=True, oob_score=True, 
             n_jobs=-1, random_state=None, verbose=0, warm_start=False, class_weight=None)
         rffit.fit(X_train,y_train)
+        """
         print "step"+str(step[i])
         print "Percentage of positive data: ",float(sum(Y))/len(Y)
+        """
         y_pred = rffit.predict(X_test)
 
         #print "Accuracy score w/o feature selection: ",logreg.score(X_test,y_test)
@@ -259,5 +259,10 @@ for i in xrange(len(step)):
         masked_y_pred = logreg.predict(masked_X_test)
         print classification_report(y_test,masked_y_pred)
         """
+    """    
     print "Average accuracy score w/o feature selection:", sum(score1)/len(score1)
+    """
+    avgscore.append(sum(score1)/len(score1))
     #print "Average accuracy score w/ feature selection:", sum(score2)/len(score2)
+print "average scores are :", avgscore   
+print "number of data: ", numData
