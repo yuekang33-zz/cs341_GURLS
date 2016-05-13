@@ -9,6 +9,7 @@
 #   logistic regression    
 #   5 fold cross validation added
 #   correlation coefficient
+#   tuning the model
 import pandas as pd
 import numpy as np 
 import scipy
@@ -161,8 +162,9 @@ for i in xrange(len(step)):
 
     df_view_step = pd.merge(df_view,df_reshare_step, how = 'inner',on = ['appmsgid','bizuin_md5','itemidx'])
     df_topview = df_view_step[df_view_step['reshare_timestamp']>=df_view_step['read_timestamp']]
+    df_topview.rename(columns = {'read_timestamp':'numViews'})
     df_topview_count = df_topview.groupby(['bizuin_md5','appmsgid','itemidx'],
-        as_index = False).agg({'read_timestamp':'count','len':'first'})
+        as_index = False).agg({'numViews':'count','len':'first'})
     
     #filter out articles below required size
     df_temp = df_distribution[df_distribution["cascadeSize"].between(step[i],10e6)]
@@ -191,7 +193,7 @@ for i in xrange(len(step)):
     df_temp['timeElapsed'] = df_timeElapsed['timeElapsed']
     df_temp['top'] = df_timeGap['diffs']
     df_temp['bottom'] = df_timeGap['bottom']
-
+    df_temp['viewspeed'] = df_temp['numViews']/df_temp['timeElapsed']
     """
     print "example of features"
     print df_features.head()
