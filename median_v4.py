@@ -182,8 +182,8 @@ for i in xrange(len(step)):
     df_topview_count['appmsgid'] = df_topview_count['appmsgid'].astype(int)
     df_topview_count['itemidx'] = df_topview_count['itemidx'].astype(int)
     df_temp = pd.merge(df_temp,df_topview_count, on = ['appmsgid','bizuin_md5','itemidx'])
-    df_timeElapsed = df_temp.drop('reshare_timestamp', axis =1)
-    df_timeElapsed = df_temp.drop('posttime', axis =1)
+    df_timeElapsed = df_timeElapsed.drop('reshare_timestamp', axis =1)
+    df_timeElapsed = df_timeElapsed.drop('posttime', axis =1)
     df_temp = pd.merge(df_temp,df_timeElapsed, on = ['appmsgid','bizuin_md5','itemidx'])
     df_temp = pd.merge(df_temp,df_timeGap, on = ['appmsgid','bizuin_md5','itemidx'])
     """
