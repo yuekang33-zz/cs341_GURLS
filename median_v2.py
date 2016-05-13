@@ -44,8 +44,8 @@ df_reshare_timestamp['appmsgid'] = df_reshare['appmsgid']#.astype(int)
 df_reshare_timestamp['bizuin_md5'] = df_reshare['bizuin_md5']
 df_reshare_timestamp['itemidx'] = df_reshare['itemidx']#.astype(int)
 df_reshare_timestamp['reshare_timestamp'] = df_reshare['reshare_timestamp']
-df_reshare_timestamp['posttime'] = df_reshare['reshare_timestamp']
-
+#df_reshare_timestamp['posttime'] = df_reshare['reshare_timestamp']
+df_reshare_timestamp['posttime'] = df_reshare['posttime']
 """
 #change data type for merging, might be unnecessary
 df_reshare['appmsgid'] = df_reshare['appmsgid'].astype(object)
