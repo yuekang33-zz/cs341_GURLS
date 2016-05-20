@@ -179,7 +179,14 @@ for i in xrange(len(step)):
     df_topview_count['appmsgid'] = df_topview_count['appmsgid'].astype(int)
     df_topview_count['itemidx'] = df_topview_count['itemidx'].astype(int)   
     df_timeElapsed = df_timeElapsed .drop('reshare_timestamp', axis =1)
+    df_timeElapsed['posttime_date'] = df_timeElapsed['posttime']
+    df_timeElapsed['posttime_date'] = pd.to_datetime(df_timeElapsed['posttime_date'], unit= 's') 
+    df_timeElapsed.set_index('posttime_date', inplace=True)
+    df_timeElapsed['hour'] = df_timeElapsed.index.hour
     df_timeElapsed = df_timeElapsed .drop('posttime', axis =1)
+    df_timeElapsed = df_timeElapsed.reset_index(level=1)
+    df_timeElapsed = df_timeElapsed.drop(['posttime_date'], axis=1)
+
     ####create a 2d list of coefficients
     coefficient_results = []    
     for j in xrange(len(given_size)):
