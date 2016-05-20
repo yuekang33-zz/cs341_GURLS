@@ -235,7 +235,13 @@ for i in xrange(len(step)):
     df_topview_count['itemidx'] = df_topview_count['itemidx'].astype(int)
     df_temp = pd.merge(df_temp,df_topview_count, on = ['appmsgid','bizuin_md5','itemidx'])
     df_timeElapsed = df_timeElapsed .drop('reshare_timestamp', axis =1)
+    df_timeElapsed['posttime_date'] = df_timeElapsed['posttime']
+    df_timeElapsed['posttime_date'] = pd.to_datetime(df_timeElapsed['posttime_date'], unit= 's') 
+    df_timeElapsed.set_index('posttime_date', inplace=True)
+    df_timeElapsed['hour'] = df_timeElapsed.index.hour
     df_timeElapsed = df_timeElapsed .drop('posttime', axis =1)
+    df_timeElapsed = df_timeElapsed.reset_index(level=1)
+    df_timeElapsed = df_timeElapsed.drop(['posttime_date'], axis=1)
     df_temp = pd.merge(df_temp,df_timeElapsed, on = ['appmsgid','bizuin_md5','itemidx'])
     df_temp = pd.merge(df_temp,df_timeGap, on = ['appmsgid','bizuin_md5','itemidx'])
     """
