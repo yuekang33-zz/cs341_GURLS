@@ -5,6 +5,7 @@
 #   reshare user's position in the cascade
 #   structual: number of first layer users, 
 #   more user features
+#   reshare method, posttime's hr
 #model:
 #   logistic regression    
 #   5 fold cross validation added
