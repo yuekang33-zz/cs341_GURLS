@@ -38,38 +38,18 @@ df_reshare_mor['appmsgid'] = df_reshare['appmsgid']
 df_reshare_mor['bizuin_md5'] = df_reshare['bizuin_md5']
 df_reshare_mor['itemidx'] = df_reshare['itemidx']
 
-#print df_reshare_mor.iloc[0]['cur_publishid']
-
 # splice cur_publishid
-#foo = lambda x: pd.Series([i for i in reversed(x.split('_',1))])
 foo = lambda x: pd.Series(x.split('_',1))
 tmp = df_reshare['cur_publishid'].apply(foo)
 tmp1 = tmp.ix[:,0:2]
-tmp1.columns = ['value', 'meansOfReshare']
-#tmp1.drop_duplicates(cols='meansOfReshare',keep = 'first')
-#print tmp1
-
-tmp1.loc[tmp1['meansOfReshare'] == 'sns', 'value'] = 0
-tmp1.loc[tmp1['meansOfReshare'] == 'fav', 'value'] = 1
-tmp1.loc[tmp1['meansOfReshare'] == 'msg', 'value'] = 2
-#tmp1.loc[tmp1['meansOfReshare'] == 'bs', 'value'] = 3
-#tmp1.loc[tmp1['meansOfReshare'] == 'bshw', 'value'] = 4
-#tmp1.loc[tmp1['meansOfReshare'] == 'app', 'value'] = 5
-
-df_reshare_mor['value'] = tmp1['value']
-df_reshare_mor['meansOfReshare'] = tmp1['meansOfReshare']
+tmp1.columns = ['meansOfReshare', 'value']
+df_reshare_mor['is_sns'] = tmp1['meansOfReshare'] == 'sns'
+df_reshare_mor['is_fav'] = tmp1['meansOfReshare'] == 'fav'
+df_reshare_mor['is_msg'] = tmp1['meansOfReshare'] == 'msg'
 
 # store result to .csv
 filename ="/data/stanford/p_ruixilin/meansOfReshare.csv"
 df_reshare_mor.to_csv(filename)
-
-
-
-
-
-
-
-
 
 
 
