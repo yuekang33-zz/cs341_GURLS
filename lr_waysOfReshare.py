@@ -37,7 +37,7 @@ df_distribution = pd.read_csv(Location,index_col=0,header = 0)
 df_distribution.columns = ("appmsgid","bizuin_md5","itemidx","cascadeSize")#3 article id are objects, because header mixed up into the data as a row
 df_fancount = pd.read_csv(Location_fan,index_col=None,header=0)#bizuin_md5 only 
 df_reshare = pd.read_csv(LocationReshare,index_col = None, header = 0, sep = "\t")#app and item are int64
-df_MOR = pd.read_csv(LocationMOR,index_col = None, header = 0, sep = "\t")
+df_MOR = pd.read_csv(LocationMOR,index_col = None, header = 0, sep = ",")
 df_reshare['is_sns'] = df_MOR['is_sns']
 df_reshare['is_fav'] = df_MOR['is_fav']
 df_reshare['is_msg'] = df_MOR['is_msg']
