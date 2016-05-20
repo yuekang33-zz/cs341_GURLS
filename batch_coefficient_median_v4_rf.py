@@ -31,11 +31,16 @@ LocationReshare = r'/data/wechat_data/article_reshare'
 LocationUser = r'/data/wechat_data/userattr_sample'
 LocationView = r'/data/wechat_data/article_read'
 LocationCascade = r'/data/stanford/p_hf/cascadeINFO/cascadeUserLayer_whole.txt'
+LocationMOR = r'/data/stanford/p_ruixilin/meansOfReshare.csv'
 #public account data
 df_distribution = pd.read_csv(Location,index_col=0,header = 0)
 df_distribution.columns = ("appmsgid","bizuin_md5","itemidx","cascadeSize")#3 article id are objects, because header mixed up into the data as a row
 df_fancount = pd.read_csv(Location_fan,index_col=None,header=0)#bizuin_md5 only 
 df_reshare = pd.read_csv(LocationReshare,index_col = None, header = 0, sep = "\t")#app and item are int64
+df_MOR = pd.read_csv(LocationMOR,index_col = None, header = 0, sep = ",")
+df_reshare['is_sns'] = df_MOR['is_sns']
+df_reshare['is_fav'] = df_MOR['is_fav']
+df_reshare['is_msg'] = df_MOR['is_msg']
 
 #public account view data
 df_view = pd.read_csv(LocationView, sep = "\t", header = None)#app and item are int64
@@ -127,7 +132,7 @@ for i in xrange(len(step)):
     df_reshare_struct["avgLayer"] = df_reshare_struct['cascadeLayer'].copy()
     df_reshare_struct["did_leave"] = df_reshare_struct['cascadeLayer'].copy()
     df_reshare_struct.rename(columns={'friend_count':'borderNodes'},inplace = True)
-    df_reshare_structural = df_reshare_struct.groupby(['bizuin_md5','appmsgid','itemidx'],as_index = False).agg({'firstLayer':'sum','borderNodes':'sum','stdLayer':'std','avgLayer':'mean','did_leave':'max'})
+    df_reshare_structural = df_reshare_struct.groupby(['bizuin_md5','appmsgid','itemidx'],as_index = False).agg({'firstLayer':'sum','borderNodes':'sum','stdLayer':'std','avgLayer':'mean','did_leave':'max','is_sns':'sum','is_fav':'sum','is_msg':'sum'})
     ##add number of fans to bordernodes
     df_reshare_structural = pd.merge(df_reshare_structural,df_fancount, how = "left", on = ['bizuin_md5'])
     df_reshare_structural['borderNodes'] = df_reshare_structural['borderNodes']+df_reshare_structural['fans_num']
